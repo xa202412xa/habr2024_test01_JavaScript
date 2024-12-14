@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таймеры обратного отсчёта</title>
+    <style>
+        /* Стили для списка таймеров */
+        #timers {
+            list-style-type: none;
+            padding: 0;
+        }
+        /* Стили для каждого таймера */
+        .timer {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div>
+            <!-- Поле ввода времени в секундах -->
+            <input type="number" id="time-input" placeholder="Введите время в секундах">
+            <!-- Кнопка для добавления таймера -->
+            <button id="add-timer">Добавить таймер</button>
+        </div>
+        <ul id="timers">
+            <!-- Таймеры будут добавляться сюда -->
+        </ul>
+    </div>
+
+    <script>
+        // Обработчик события для кнопки добавления таймера
+        document.getElementById('add-timer').addEventListener('click', function() {
+            const timeInput = document.getElementById('time-input');
+            const time = parseInt(timeInput.value);
+            // Проверка корректности введенного времени
+            if (isNaN(time) || time <= 0) {
+                alert('Введите корректное время в секундах');
+                return;
+            }
+            // Добавление таймера
+            addTimer(time);
+            timeInput.value = '';
+        });
+
+        // Функция для добавления таймера
+        function addTimer(duration) {
+            const timerId = Date.now(); // Уникальный идентификатор таймера
+            const timerElement = document.createElement('li'); // Создание элемента списка для таймера
+            timerElement.className = 'timer';
+            timerElement.id = `timer-${timerId}`;
+            timerElement.innerHTML = `
+                <span id="time-${timerId}">${duration}</span> сек.
+                <button onclick="removeTimer(${timerId})">Удалить</button>
+            `;
+            document.getElementById('timers').appendChild(timerElement);
+
+            // Интервал для обновления таймера каждую секунду
+            const intervalId = setInterval(function() {
+                duration--;
+                document.getElementById(`time-${timerId}`).textContent = duration;
+                // Удаление таймера по завершении отсчета
+                if (duration <= 0) {
+                    clearInterval(intervalId);
+                    removeTimer(timerId);
+                }
+            }, 1000);
+        }
+
+        // Функция для удаления таймера
+        function removeTimer(timerId) {
+            const timerElement = document.getElementById(`timer-${timerId}`);
+            if (timerElement) {
+                timerElement.remove();
+            }
+        }
+    </script>
+</body>
+</html>
